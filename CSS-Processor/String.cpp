@@ -49,6 +49,34 @@ String& String::operator=(const char* source)
 	return *this;
 }
 
+const char& String::operator[](int index) const
+{
+	return cstring[index];
+}
+
+String operator+(const String& lhs, const String& rhs)
+{
+	int length = lhs.length + rhs.length + 1;
+	char* tmp = new char[length];
+	strcpy(tmp, lhs.cstring);
+	strcat(tmp, rhs.cstring);
+	String s = tmp;
+	delete[] tmp;
+	return s;
+}
+
+bool operator==(const String& lhs, const String& rhs)
+{
+	if (lhs.length != rhs.length)
+		return false;
+
+	for (int i = 0; i < lhs.length; i++)
+		if (lhs.cstring[i] != rhs.cstring[i])
+			return false;
+
+	return true;
+}
+
 std::ostream& operator<<(std::ostream& os, const String& string)
 {
 	os << string.cstring;

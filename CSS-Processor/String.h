@@ -21,6 +21,9 @@ public:
 	int getLength() const;
 
 	String& operator=(const char* source);
+	const char& operator[](int index) const;
+	friend String operator+(const String& lhs, const String& rhs);
+	friend bool operator==(const String& lhs, const String& rhs);
 	friend std::ostream& operator<<(std::ostream& os, const String& string);
 };
 
