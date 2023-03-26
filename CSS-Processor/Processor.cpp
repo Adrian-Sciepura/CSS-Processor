@@ -2,7 +2,6 @@
 
 Processor::Processor()
 {
-    this->numberOfSections = 0;
     this->readMode = false;
     this->wasPreviousElementAttributeName = false;
     this->isInSection = false;
@@ -17,16 +16,6 @@ Processor::~Processor()
 
 void Processor::start()
 {
-    readCSS();
-}
-
-void Processor::stop()
-{
-
-}
-
-void Processor::readCSS()
-{
     char c;
     char buffer[100];
     int counter = 0;
@@ -36,27 +25,57 @@ void Processor::readCSS()
 
     while (c = getchar())
     {
-        if (c == '\n')
-            endOfLine = true;
-        else if (c == '\"')
+        switch (c)
         {
-            ignoreSpacesUntilNextQuotationMark = !ignoreSpacesUntilNextQuotationMark;
-        }
-        else if (c == ' ' && !ignoreSpacesUntilNextQuotationMark)
-        {
-            if (ignoreNextSpace)
-                ignoreNextSpace = false;
-            else
+            case '\n':
+            {
                 endOfLine = true;
+                break;
+            }
+            case ',':
+            {
+                ignoreNextSpace = true;
+                break;
+            }
+            case ' ':
+            {
+                if (ignoreSpacesUntilNextQuotationMark)
+                    break;
+                
+                if (ignoreNextSpace)
+                    ignoreNextSpace = false;
+                else
+                    endOfLine = true;
+                
+                break;
+            }
+            case '\"':
+            {
+                ignoreSpacesUntilNextQuotationMark = !ignoreSpacesUntilNextQuotationMark;
+                break;
+            }
+            default:
+            {
+                ignoreNextSpace = false;
+                break;
+            }
         }
-        else if (c == ',')
-            ignoreNextSpace = true;
 
         if (endOfLine)
         {
             buffer[counter] = '\0';
             counter++;
-            interpretCSS(buffer, counter);
+
+            if (checkExtra(buffer, counter))
+                readMode = !readMode;
+            else
+            {
+                if (readMode)
+                    interpretCommand(buffer, counter);
+                else
+                    interpretCSS(buffer, counter);
+            }
+
             counter = 0;
             endOfLine = false;
             continue;
@@ -67,36 +86,37 @@ void Processor::readCSS()
     }
 }
 
+bool Processor::checkExtra(const char* text, int length)
+{
+    if (strcmp(text, "****") == 0 || strcmp(text, "????") == 0)
+        return true;
+    
+
+    return false;
+}
+
 void Processor::interpretCSS(char* text, int length)
 {
     if (this->isInSection)
     {
         if (this->isInBlock)
         {
-            for (int i = 0; i < length; i++)
+            char* search = strchr(text, '}');
+            if (search != NULL)
             {
-                if (text[i] == '}')
-                {
-                    this->isInBlock = false;
-                    this->isInSection = false;
-                    text[i] = '\0';
-                    break;
-                }
+                this->isInBlock = false;
+                this->isInSection = false;
+                *search = '\0';
             }
 
             if (this->wasPreviousElementAttributeName)
             {
                 this->wasPreviousElementAttributeName = false;
-                for (int i = 0; i < length; i++)
-                {
-                    if (text[i] == ';')
-                    {
-                        text[i] = '\0';
-                        break;
-                    }
-                }
-
-                std::cout << "Found attribute: " << this->prevAttributeName << " -> " << text << '\n';
+                char* search = strchr(text, ';');
+                if (search != NULL)
+                    *search = '\0';
+                
+                this->list.last->attributes.add({ prevAttributeName, text });
             }
             else
             {
@@ -105,59 +125,66 @@ void Processor::interpretCSS(char* text, int length)
         }
         else
         {
-            for (int i = 0; i < length; i++)
+            char* search = strchr(text, '{');
+            if (search != NULL)
             {
-                if (text[i] == '{')
-                {
-                    this->isInBlock = true;
-                    text++;
-                }
+                this->isInBlock = true;
+                text++;
             }
 
-            if (length > 1)
-                checkAttribute(text, length - 1);
+            checkAttribute(text, length - 1);
         }
     }
     else
     {
-        bool foundColon = false;
-        for (int i = 0; i < length; i++)
-        {
-            if (text[i] == ':')
-            {
-                foundColon = true;
-                text[i] = '\0';
-                break;
-            }
-        }
+        this->list.newNode();
+        this->isInSection = true;
+        char* search = strchr(text, ':');
 
-        if (foundColon)
+        if (search != NULL)
         {
             this->prevAttributeName = text;
-            this->isInSection = true;
             this->isInBlock = true;
             this->wasPreviousElementAttributeName = true;
+            *search = '\0';
         }
         else
         {
-            std::cout << "Found selectors: " << text << '\n';
-            this->isInSection = true;
+            this->list.last->selectors.add({ text });
         }
     }
 }
 
 void Processor::checkAttribute(char* text, int length)
 {
-    bool foundColon = false;
-    for (int i = 0; i < length; i++)
+    char* search = strchr(text, ':');
+    if (search != NULL)
     {
-        if (text[i] == ':')
+        this->wasPreviousElementAttributeName = true;
+        *search = '\0';
+        this->prevAttributeName = text;
+    }
+}
+
+void Processor::interpretCommand(char* text, int length)
+{
+    if (strcmp(text, "?") == 0)
+    {
+        for (int i = 0; i < list.numberOfNodes; i++)
         {
-            foundColon = true;
-            this->wasPreviousElementAttributeName = true;
+            ListNode* temp = list.getNode(i);
+            std::cout << "Section nr. " << i << '\n';
+            std::cout << "Selectors: " << temp->selectors.first->data[0] << '\n';
+            ForwardListNode<Attribute>* attr = temp->attributes.first;
+            for (int j = 0; j < (temp->attributes.numberOfElements / ForwardListNode<Attribute>::ARRAY_SIZE) + 1; j++)
+            {
+                for (int k = 0; k < attr->storedStructures; k++)
+                {
+                    std::cout << "Attribute: " << attr->data[k].name << " -> " << attr->data[k].value << '\n';
+                }
+                attr = attr->next;
+            }
+            std::cout << '\n';
         }
     }
-
-    if (foundColon)
-        this->prevAttributeName = text;
 }

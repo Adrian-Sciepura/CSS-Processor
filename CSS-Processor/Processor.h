@@ -3,14 +3,15 @@
 
 #include <iostream>
 #include "String.h"
+#include "List.h"
 using string = String;
 
 class Processor
 {
 private:
 	//VARIABLES
+	List list;
 	string prevAttributeName;
-	int numberOfSections;
 
 	//FLAGS
 	bool readMode; //false - CSS, true - Commands
@@ -18,19 +19,21 @@ private:
 	bool isInSection;
 	bool isInBlock;
 
+	//FUNCTIONS
+	bool checkExtra(const char* text, int length);
+
 	//CSS FUNCTIONS
-	void readCSS();
 	void interpretCSS(char* text, int length);
 	void checkAttribute(char* text, int length);
 	
 	//COMMAND FUNCTIONS
+	void interpretCommand(char* text, int length);
 
 public:
 	Processor();
 	~Processor();
 
 	void start();
-	void stop();
 };
 
 #endif
