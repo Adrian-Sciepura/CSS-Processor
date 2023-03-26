@@ -8,6 +8,7 @@ template <class T>
 class ForwardList
 {
 public:
+	int numberOfElements;
 	ForwardListNode<T>* first;
 		
 	ForwardList();
@@ -22,6 +23,7 @@ template <class T>
 ForwardList<T>::ForwardList()
 {
 	this->first = new ForwardListNode<T>();
+	this->numberOfElements = 0;
 }
 
 template <class T>
@@ -52,6 +54,7 @@ void ForwardList<T>::add(const T& element)
 
 	first->data[first->storedStructures] = element;
 	first->storedStructures++;
+	this->numberOfElements++;
 }
 
 template <class T>
@@ -66,6 +69,7 @@ void ForwardList<T>::add(T&& element)
 
 	first->data[first->storedStructures] = static_cast<T&&>(element);
 	first->storedStructures++;
+	this->numberOfElements++;
 }
 
 template <class T>
