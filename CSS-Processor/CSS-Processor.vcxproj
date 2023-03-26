@@ -104,6 +104,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <InlineFunctionExpansion>
+      </InlineFunctionExpansion>
+      <OmitFramePointers>
+      </OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,11 +131,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="CSS-Processor.cpp" />
+    <ClCompile Include="List.cpp" />
+    <ClCompile Include="ListNode.cpp" />
     <ClCompile Include="Processor.cpp" />
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Attribute.h" />
+    <ClInclude Include="ForwardList.h" />
+    <ClInclude Include="ForwardListNode.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="ListNode.h" />
     <ClInclude Include="Processor.h" />
     <ClInclude Include="String.h" />
   </ItemGroup>
