@@ -21,6 +21,8 @@ public:
 	int getLength() const;
 
 	String& operator=(const char* source);
+	String& operator=(const String& source);
+	String& operator=(String&& source) noexcept;
 	const char& operator[](int index) const;
 	friend String operator+(const String& lhs, const String& rhs);
 	friend bool operator==(const String& lhs, const String& rhs);

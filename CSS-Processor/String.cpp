@@ -49,6 +49,24 @@ String& String::operator=(const char* source)
 	return *this;
 }
 
+String& String::operator=(const String& source)
+{
+	delete[] this->cstring;
+	this->cstring = new char[source.length + 1];
+	strcpy(this->cstring, source.cstring);
+	return *this;
+}
+
+String& String::operator=(String&& source) noexcept
+{
+	delete[] this->cstring;
+	this->cstring = source.cstring;
+	this->length = source.length;
+	source.cstring = nullptr;
+	source.length = 0;
+	return *this;
+}
+
 const char& String::operator[](int index) const
 {
 	return cstring[index];
