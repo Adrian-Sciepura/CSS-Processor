@@ -136,6 +136,7 @@
     <ClCompile Include="List.cpp" />
     <ClCompile Include="ListNode.cpp" />
     <ClCompile Include="Processor.cpp" />
+    <ClCompile Include="Section.cpp" />
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,7 +146,9 @@
     <ClInclude Include="List.h" />
     <ClInclude Include="ListNode.h" />
     <ClInclude Include="Processor.h" />
+    <ClInclude Include="Section.h" />
     <ClInclude Include="String.h" />
+    <ClInclude Include="Tuple.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
