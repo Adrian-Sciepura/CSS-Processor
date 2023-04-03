@@ -16,6 +16,9 @@ public:
 
 	Attribute& operator=(const Attribute& attribute);
 	Attribute& operator=(Attribute&& attribute) noexcept;
+	friend bool operator==(const Attribute& lhs, const Attribute& rhs);
+	friend bool operator==(const Attribute& lhs, int length);
+	friend std::ostream& operator<<(std::ostream& os, const Attribute& attribute);
 };
 
 #endif
