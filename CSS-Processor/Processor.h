@@ -1,33 +1,37 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
+#include <stdlib.h>
 #include "String.h"
 #include "List.h"
-using string = String;
 
 class Processor
 {
 private:
 	//VARIABLES
 	List list;
-	string prevAttributeName;
+	Section* lastSection;
+	String prevAttributeName;
 
 	//FLAGS
 	bool readMode; //false - CSS, true - Commands
 	bool wasPreviousElementAttributeName;
+	bool gotAllSelectors;
 	bool isInSection;
-	bool isInBlock;
+	bool foundBracket;
+	bool foundColon;
 
 	//FUNCTIONS
-	bool checkExtra(const char* text, int length);
+	bool checkExtra(const char* text);
+	void printResult(char* arg1, char& action, char* arg2);
 
 	//CSS FUNCTIONS
 	void interpretCSS(char* text, int length);
-	void checkAttribute(char* text, int length);
 	
 	//COMMAND FUNCTIONS
-	void interpretCommand(char* text, int length);
+	void interpretCommand(char* text);
 
 public:
 	Processor();
