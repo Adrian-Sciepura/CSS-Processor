@@ -4,14 +4,17 @@
 #include "ForwardList.h"
 #include "Attribute.h"
 #include "String.h"
+#include "Section.h"
 
 class ListNode
 {
 public:
+	static constexpr int ARRAY_SIZE = 8;
+	int numberOfSections;
+	int cursor;
 	ListNode* previous;
 	ListNode* next;
-	ForwardList<Attribute> attributes;
-	ForwardList<String> selectors;
+	Section* sections[ARRAY_SIZE];
 
 	ListNode();
 	~ListNode();

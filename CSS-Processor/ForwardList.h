@@ -7,89 +7,138 @@
 template <class T>
 class ForwardList
 {
+private:
+	void newNode();
+
 public:
-	int numberOfElements;
+	int numberOfNodes;
 	ForwardListNode<T>* first;
+	ForwardListNode<T>* last;
 		
 	ForwardList();
 	~ForwardList();
 
+	ForwardListNode<T>* find(const T& element);
+	ForwardListNode<T>* find(int index);
 	void add(const T& element);
 	void add(T&& element);
-	void print();
+	bool remove(const T& element);
 };
 
 template <class T>
 ForwardList<T>::ForwardList()
 {
-	this->first = new ForwardListNode<T>();
-	this->numberOfElements = 0;
+	this->first = nullptr;
+	this->last = nullptr;
+	this->numberOfNodes = 0;
 }
 
 template <class T>
 ForwardList<T>::~ForwardList()
 {
-	ForwardListNode<T>* temp = first;
+	ForwardListNode<T>* temp = this->first;
 	ForwardListNode<T>* temp2;
-	while (true)
+	while (temp != nullptr)
 	{
 		temp2 = temp->next;
 		delete temp;
-		if (temp2 == nullptr)
-			break;
-	
 		temp = temp2;
 	}
 }
 
 template <class T>
+void ForwardList<T>::newNode()
+{
+	ForwardListNode<T>* temp = this->last;
+	this->last = new ForwardListNode<T>();
+	if (temp != nullptr)
+		temp->next = this->last;
+	else
+		this->first = this->last;
+
+	this->numberOfNodes++;
+}
+
+template<class T>
+ForwardListNode<T>* ForwardList<T>::find(const T& element)
+{
+	ForwardListNode<T>* search = this->first;
+	while (search != nullptr)
+	{
+		if (search->data == element)
+			return search;
+		search = search->next;
+	}
+	return nullptr;
+}
+
+template<class T>
+ForwardListNode<T>* ForwardList<T>::find(int index)
+{
+	if(index > this->numberOfNodes - 1)
+		return nullptr;
+
+	ForwardListNode<T>* search = this->first;
+	for (int i = 0; i < index; i++)
+		search = search->next;
+
+	return search;
+}
+
+template <class T>
 void ForwardList<T>::add(const T& element)
 {
-	if (first->storedStructures == first->ARRAY_SIZE)
+	ForwardListNode<T>* whereToAdd = this->find(element);
+	if (whereToAdd == nullptr)
 	{
-		ForwardListNode<T>* temp = new ForwardListNode<T>();
-		temp->next = this->first;
-		this->first = temp;
+		newNode();
+		whereToAdd = this->last;
 	}
 
-	first->data[first->storedStructures] = element;
-	first->storedStructures++;
-	this->numberOfElements++;
+	whereToAdd->data = element;
 }
 
 template <class T>
 void ForwardList<T>::add(T&& element)
 {
-	if (first->storedStructures == first->ARRAY_SIZE)
+	ForwardListNode<T>* whereToAdd = this->find(element);
+	if (whereToAdd == nullptr)
 	{
-		ForwardListNode<T>* temp = new ForwardListNode<T>();
-		temp->next = this->first;
-		this->first = temp;
+		newNode();
+		whereToAdd = this->last;
 	}
-
-	first->data[first->storedStructures] = static_cast<T&&>(element);
-	first->storedStructures++;
-	this->numberOfElements++;
+	
+	whereToAdd->data = static_cast<T&&>(element);
 }
 
-template <class T>
-void ForwardList<T>::print()
+template<class T>
+bool ForwardList<T>::remove(const T& element)
 {
-	int counter = 0;
-	ForwardListNode<T>* node = first;
+	ForwardListNode<T>* search = this->first;
+	ForwardListNode<T>* prev = nullptr;
 
-	while (true)
+	while (search != nullptr)
 	{
-		for (int i = 0; i < node->storedStructures; i++)
-			std::cout << "Data from node " << counter << ": " << node->data[i] << '\n';
+		if (search->data == element)
+		{
+			if (prev == nullptr)
+				this->first = search->next;
+			else
+				prev->next = search->next;
 
-		std::cout << '\n';
-		counter++;
-		if (node->next == nullptr)
-			break;
+			if (search->next == nullptr)
+				this->last = prev;
 
-		node = node->next;
+			delete search;
+			this->numberOfNodes--;
+			return true;
+		}
+
+		prev = search;
+		search = search->next;
 	}
+	
+	return false;
 }
 
 #endif
