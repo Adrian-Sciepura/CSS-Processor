@@ -4,7 +4,7 @@ String::String()
 {
 	this->cstring = new char[1];
 	this->cstring[0] = '\0';
-	this->length = 1;
+	this->length = 0;
 }
 
 String::String(const char* source)
@@ -54,6 +54,7 @@ String& String::operator=(const String& source)
 	delete[] this->cstring;
 	this->cstring = new char[source.length + 1];
 	strcpy(this->cstring, source.cstring);
+	this->length = source.length;
 	return *this;
 }
 
@@ -91,6 +92,14 @@ bool operator==(const String& lhs, const String& rhs)
 	for (int i = 0; i < lhs.length; i++)
 		if (lhs.cstring[i] != rhs.cstring[i])
 			return false;
+
+	return true;
+}
+
+bool operator==(const String& lhs, int length)
+{
+	if (lhs.length != length)
+		return false;
 
 	return true;
 }
