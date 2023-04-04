@@ -35,6 +35,7 @@ void Processor::start()
         {
             switch (c)
             {
+                case '\r':
                 case '\t':
                     continue;
                 case ' ':
@@ -198,21 +199,6 @@ void Processor::interpretCommand(char* text)
     {
         std::cout << "? == " << this->list.numberOfSections << '\n';
     }
-    else if (strcmp(text, ">") == 0)
-    {
-        ListNode* node = this->list.first;
-        while (node != nullptr)
-        {
-            for (int i = 0; i < node->cursor; i++)
-            {
-                if (node->sections[i] != nullptr)
-                {
-                    node->sections[i]->print();
-                }
-            }
-            node = node->next;
-        }
-    }
     else
     {
         char* arg1;
@@ -231,13 +217,14 @@ void Processor::interpretCommand(char* text)
         text = search + 1;
         arg2 = text;
 
+        char* a1, * a2;
+        int num1 = strtol(arg1, &a1, 10);
+        int num2 = strtol(arg2, &a2, 10);
+
         switch (action)
         {
             case 'S':
             {
-                char *a1, *a2;
-                int num1 = strtol(arg1, &a1, 10);
-                int num2 = strtol(arg2, &a2, 10);
                 if (*a1 == NULL && *a2 == NULL)
                 {
                     Section* section = this->list[num1 - 1];
@@ -270,8 +257,6 @@ void Processor::interpretCommand(char* text)
             }
             case 'A':
             {
-                char* a1;
-                int num1 = strtol(arg1, &a1, 10);
                 if (*a1 == NULL)
                 {
                     Section* section = this->list[num1 - 1];
@@ -331,8 +316,6 @@ void Processor::interpretCommand(char* text)
             }
             case 'D':
             {
-                char* a1;
-                int num1 = strtol(arg1, &a1, 10);
                 if (*a1 == NULL)
                 {
                     if (arg2[0] == '*')

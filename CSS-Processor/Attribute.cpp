@@ -39,14 +39,6 @@ bool operator==(const Attribute& lhs, const Attribute& rhs)
 	return false;
 }
 
-bool operator==(const Attribute& lhs, int length)
-{
-	if (lhs.name.getLength() + lhs.value.getLength() != length)
-		return false;
-	
-	return true;
-}
-
 std::ostream& operator<<(std::ostream& os, const Attribute& attribute)
 {
 	os << attribute.name << " " << attribute.value;

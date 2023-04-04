@@ -10,7 +10,6 @@ class Section
 public:
 	ForwardList<String> selectors;
 	ForwardList<Attribute> attributes;
-	void print();
 };
 
 #endif
